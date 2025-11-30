@@ -9,13 +9,13 @@ PORT(
   y: OUT STD_ULOGIC); 
 END; 
 
-ARCHITECTURE arch_mealy of recog2 is
+ARCHITECTURE arch_mealy OF recog2 IS
   TYPE state_type is (INIT, FIRST, SECOND); -- List states
   SIGNAL curState, nextState: STATE_TYPE; 
   SIGNAL cnt0, nextCnt0: INTEGER RANGE 0 TO 14:=0; --Counter for 0
   SIGNAL cnt1, nextCnt1: INTEGER RANGE 0 TO 16:=0; --Counter for 1
 BEGIN 
-  combi_nextState: PROCESS(curState, x, cnt0, cnt1) 
+  combi_nextState: PROCESS(curState, x, cnt0, cnt1) -- Start combinational processes
   BEGIN 
     nextState <= curState;
     nextCnt0 <= cnt0;
@@ -53,24 +53,25 @@ BEGIN
             nextCnt1 <= cnt1 + 1;
             nextState <= SECOND;
           ELSE
-            y = '1'
+            y = '1' -- output is 1
             nextState <= INIT;
           END IF;
         END IF;
     END CASE;
   END PROCESS;
 
-seq_state: PROCESS(clk, reset)
+seq_state: PROCESS(clk, reset) -- Set up sequential processes
 BEGIN 
   IF reset = '1' THEN
-    curState = INIT;
+    curState <= INIT;
     cnt0 <= 0;
-  ELSE
-    curState = INIT;
+  ELSIF clk'event AND clk = '1' THEN -- Update at rising edge of clock
+    curState = nextState;
+    cnt0 <= nextCnt0;
+    cnt1 <= nextCnt1;
+  END IF 
+END PROCESS -- End sequential processes
 
-  combi_out: PROCESS(curState, x)
-  BEGIN
-    y <= '0'; -- Assign default value 0 
-    IF curState = THIRD AND x = 1
-      
+END -- End mealy FSM
+
       
