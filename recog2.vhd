@@ -1,13 +1,13 @@
 LIBRARY IEEE; 
 USE IEEE.STD_LOGIC_1164.ALL;
 
-ENTITY recog2 is 
+ENTITY recog2 IS
 PORT( 
-  x: IN STD_ULOGIC; 
-  clk: IN STD_ULOGIC; 
-  reset: IN STD_ULOGIC; 
-  y: OUT STD_ULOGIC); 
-END; 
+  x: IN STD_LOGIC; 
+  clk: IN STD_LOGIC; 
+  reset: IN STD_LOGIC; 
+  y: OUT STD_LOGIC); 
+END recog2; 
 
 ARCHITECTURE arch_mealy OF recog2 IS
   TYPE state_type is (INIT, FIRST, SECOND); -- List states
@@ -20,7 +20,7 @@ BEGIN
     nextState <= curState;
     nextCnt0 <= cnt0;
     nextCnt1 <= cnt1;
-    y = '0';
+    y <= '0';
     CASE curState IS 
       WHEN INIT =>  -- State S0
         IF x = '1' THEN  -- When input is 1
@@ -28,6 +28,7 @@ BEGIN
         ELSE 
           nextState <= FIRST;
           nextCnt0 <= 0; -- set the nextCnt0 to 0
+	END IF;
       WHEN FIRST =>  --State S1
         IF x = '0' THEN  --When input is 0
           nextState <= FIRST; -- Stay in the first, but the 0 increased
@@ -41,20 +42,25 @@ BEGIN
             nextState <= SECOND; -- Transit to S2
             nextCnt1 <= 0; -- Set the nextCnt1 to 0
           ELSE
-            nextState = INIT; -- Transit to S0
+            nextState <= INIT; -- Transit to S0
+            nextCnt0 <= 0;
+            nextCnt1 <= 0;
           END IF;
-        nextCnt0 <= 0; --Set nextCnt0 back to 0
         End IF;
       WHEN SECOND => --State S2
         IF x = '0' THEN
-          nextState => FIRST; -- Back to S1
+          nextState <= FIRST; -- Back to S1
+          nextCnt0  <= 0;
+          nextCnt1  <= 0;
         ELSE 
           IF cnt1 < 16 THEN 
             nextCnt1 <= cnt1 + 1;
             nextState <= SECOND;
           ELSE
-            y = '1' -- output is 1
+            y <= '1'; -- output is 1
             nextState <= INIT;
+	    nextCnt0  <= 0;
+            nextCnt1  <= 0;
           END IF;
         END IF;
     END CASE;
@@ -65,13 +71,14 @@ BEGIN
   IF reset = '1' THEN
     curState <= INIT;
     cnt0 <= 0;
+    cnt1 <= 0;
   ELSIF clk'event AND clk = '1' THEN -- Update at rising edge of clock
-    curState = nextState;
+    curState <= nextState;
     cnt0 <= nextCnt0;
     cnt1 <= nextCnt1;
-  END IF 
-END PROCESS -- End sequential processes
+  END IF; 
+END PROCESS; -- End sequential processes
 
-END -- End mealy FSM
+END arch_mealy; -- End mealy FSM
 
       
