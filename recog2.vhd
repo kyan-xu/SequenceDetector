@@ -3,10 +3,10 @@ USE IEEE.STD_LOGIC_1164.ALL;
 
 ENTITY recog2 IS
 PORT( 
-  x: IN STD_LOGIC; 
-  clk: IN STD_LOGIC; 
-  reset: IN STD_LOGIC; 
-  y: OUT STD_LOGIC); 
+  x: IN bit; 
+  clk: IN bit; 
+  reset: IN bit; 
+  y: OUT bit); 
 END recog2; 
 
 ARCHITECTURE arch_mealy OF recog2 IS
@@ -68,7 +68,7 @@ BEGIN
 
 seq_state: PROCESS(clk, reset) -- Set up sequential processes
 BEGIN 
-  IF reset = '1' THEN
+  IF reset = '0' THEN
     curState <= INIT;
     cnt0 <= 0;
     cnt1 <= 0;
