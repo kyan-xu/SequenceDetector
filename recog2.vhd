@@ -12,8 +12,8 @@ END recog2;
 ARCHITECTURE myArch OF recog2 IS
   TYPE state_type is (INIT, FIRST, SECOND); -- List states
   SIGNAL curState, nextState: STATE_TYPE; 
-  SIGNAL cnt0, nextCnt0: INTEGER RANGE 0 TO 14:=0; --Counter for 0
-  SIGNAL cnt1, nextCnt1: INTEGER RANGE 0 TO 16:=0; --Counter for 1
+  SIGNAL cnt0, nextCnt0: INTEGER RANGE 0 TO 15:=0; --Counter for 0
+  SIGNAL cnt1, nextCnt1: INTEGER RANGE 0 TO 17:=0; --Counter for 1
 BEGIN 
   combi_nextState: PROCESS(curState, x, cnt0, cnt1) -- Start combinational processes
   BEGIN 
@@ -34,13 +34,13 @@ BEGIN
         IF x = '0' THEN  --When input is 0
           nextState <= FIRST; -- Stay in the first, but the 0 increased
 	  y <= '0';
-          IF cnt0 < 14 THEN  -- When the counted 0 is less than 15
+          IF cnt0 < 15 THEN  -- When the counted 0 is less than 15
             nextCnt0 <= cnt0 + 1; -- Number of 0 + 1
           ELSE 
-            nextCnt0 <= 14;
+            nextCnt0 <= 15;
           END IF;
         ELSE 
-          IF cnt0 = 14 THEN
+          IF cnt0 = 15 THEN
             nextState <= SECOND; -- Transit to S2
             nextCnt1 <= 1; -- Set the nextCnt1 to 1
 	    y <= '0';
@@ -58,7 +58,7 @@ BEGIN
           nextCnt1  <= 0;
 	  y <= '0';
         ELSE 
-          IF cnt1 < 16 THEN 
+          IF cnt1 < 17 THEN 
             nextCnt1 <= cnt1 + 1;
             nextState <= SECOND;
 	    y <= '0';
