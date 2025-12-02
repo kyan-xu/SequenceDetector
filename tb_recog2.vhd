@@ -28,14 +28,14 @@ BEGIN
     clk <= '1';
     WAIT FOR clk_period/2;
   END PROCESS;
-  
-  reset <= '1', 
-  WAIT FOR 20 ns;
-  reset <= '0';
+
   
   stim_proc: PROCESS
   BEGIN 
-    WAIT FOR 30 ns;
+    reset <= '1';
+    WAIT FOR 25 ns;
+    reset <= '0';
+
     FOR i IN 0 TO 14 LOOP -- 15 '0's
     x <= '0';
     WAIT FOR clk_period;
